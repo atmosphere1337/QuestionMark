@@ -19,9 +19,9 @@ import (
 // simple frontend NEXT.js
 // end
 
-type country struct {
-	id   int
-	name string
+type Country struct {
+	Id   int
+	Name string
 }
 
 type city struct {
@@ -37,13 +37,13 @@ type citizen struct {
 }
 
 func handleFnc(w http.ResponseWriter, r *http.Request) {
-	c := country{name: "Russia", id: 1}
+	c := Country{1, "Russia"}
 	// fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
-	resp, err := json.MarshalIndent(c, "", "\n")
+	resp, err := json.Marshal(c)
 	if err != nil {
 		fmt.Fprintln(w, "error")
 	}
-	fmt.Fprintln(w, "%s", resp)
+	fmt.Fprintln(w, string(resp))
 
 }
 
