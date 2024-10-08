@@ -1,0 +1,13 @@
+services:
+  elastic-search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.2
+    ports:
+     - 9200:9200
+     - 9300:9300
+  golang:
+    image: golang:1.23.2
+    volumes:
+      - .:/app
+    ports:
+     - 8080:8080
+    entrypoint: ["sleep", "infinity"]
