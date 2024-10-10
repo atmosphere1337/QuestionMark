@@ -7,7 +7,7 @@ import (
 )
 
 // db orm?
-// array?
+// response format?
 
 type Country struct {
 	Id   int
@@ -47,8 +47,19 @@ func createCountry(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(resp))
 }
 
+func getCountries(w http.ResponseWriter, r *http.Request) {
+	countries := [2]Country{{1, "Russia"}, {2, "Ukraine"}}
+	resp, err := json.Marshal(countries)
+	if err != nil {
+		fmt.Fprintln(w, "error getAll")
+		return
+	}
+	fmt.Fprintln(w, string(resp))
+}
+
 func main() {
 	http.HandleFunc("GET /api/v1/country", getCountry)
+	http.HandleFunc("GET /api/v1/countries", getCountries)
 	http.HandleFunc("POST /api/v1/country", createCountry)
 
 	http.ListenAndServe(":8080", nil)
