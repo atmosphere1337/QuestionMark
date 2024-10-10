@@ -40,6 +40,7 @@ func createCountry(w http.ResponseWriter, r *http.Request) {
 	var p Country
 	err := json.NewDecoder(r.Body).Decode(&p)
 	if err != nil {
+		w.WriteHeader(404)
 		fmt.Fprintln(w, "post error")
 		return
 	}
