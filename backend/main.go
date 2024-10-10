@@ -6,18 +6,8 @@ import (
 	"net/http"
 )
 
-// now
-// github create repo
-// single branch master
-// 5 CRUD endpoints country + entity. Do they have entities in vainla go?
-// 5 CRUD endpoints city + entity
-// 5 CRUD endpoints citizen + entity
-// dummy responses.
-// relations?
-// connect with database, postgresql?
-// elasticsearch? ES doesn't have native web interface.
-// simple frontend NEXT.js
-// end
+// db orm?
+// array?
 
 type Country struct {
 	Id   int
@@ -36,19 +26,30 @@ type citizen struct {
 	name    string
 }
 
-func handleFnc(w http.ResponseWriter, r *http.Request) {
+func getCountry(w http.ResponseWriter, r *http.Request) {
 	c := Country{1, "Russia"}
-	// fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
 	resp, err := json.Marshal(c)
 	if err != nil {
-		fmt.Fprintln(w, "error")
+		fmt.Fprintln(w, "get error")
+		return
 	}
 	fmt.Fprintln(w, string(resp))
+}
 
+func createCountry(w http.ResponseWriter, r *http.Request) {
+	var p Country
+	err := json.NewDecoder(r.Body).Decode(&p)
+	if err != nil {
+		fmt.Fprintln(w, "post error")
+		return
+	}
+	resp, err := json.Marshal(p)
+	fmt.Fprintln(w, string(resp))
 }
 
 func main() {
-	http.HandleFunc("/api/v1/country", handleFnc)
+	http.HandleFunc("GET /api/v1/country", getCountry)
+	http.HandleFunc("POST /api/v1/country", createCountry)
 
 	http.ListenAndServe(":8080", nil)
 }
