@@ -82,6 +82,9 @@ func handleDatabase(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
+	sql := fmt.Sprintf("INSERT INTO countries(name) VALUES ('%s')", "moscow")
+	db.Query(sql)
+
 	rows, err := db.Query("SELECT * FROM countries")
 
 	if err != nil {
@@ -90,13 +93,17 @@ func handleDatabase(w http.ResponseWriter, r *http.Request) {
 
 	var country Country
 	for rows.Next() {
-		rows.Scan(&country)
+		err := rows.Scan(&country.Id, &country.Name)
+		if err != nil {
+			log.Fatal(err)
+		}
 		result, err := json.Marshal(country)
 		if err != nil {
 			log.Fatal(err)
 		}
 		fmt.Fprintln(w, string(result))
 	}
+
 }
 
 func main() {
