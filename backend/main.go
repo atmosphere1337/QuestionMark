@@ -40,41 +40,27 @@ func getCountry(w http.ResponseWriter, r *http.Request) {
 }
 
 func createCountry(w http.ResponseWriter, r *http.Request) {
+
 	var p Country
 	err := json.NewDecoder(r.Body).Decode(&p)
 	if err != nil {
 		w.WriteHeader(404)
-		fmt.Fprintln(w, "post error")
+		fmt.Fprintln(w, "body error")
 		return
 	}
-	resp, err := json.Marshal(p)
-	if err != nil {
-		log.Fatal(err)
+	sql := fmt.Sprintf("INSERT INTO countries(name) VALUES ('%s')", p.Name)
+	if _, err := db.Query(sql); err != nil {
+		w.WriteHeader(404)
+		fmt.Fprintln(w, "db insert error")
+		return
 	}
-	fmt.Fprintln(w, string(resp))
 }
 
 func getCountries(w http.ResponseWriter, r *http.Request) {
-	countries := [2]Country{{1, "Russia"}, {2, "Ukraine"}}
-	resp, err := json.Marshal(countries)
-	if err != nil {
-		fmt.Fprintln(w, "error getAll")
-		return
-	}
-	fmt.Fprintln(w, string(resp))
-}
-
-func handleDatabase(w http.ResponseWriter, r *http.Request) {
-
-	sql := fmt.Sprintf("INSERT INTO countries(name) VALUES ('%s')", "moscow")
-	db.Query(sql)
-
 	rows, err := db.Query("SELECT * FROM countries")
-
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	var country Country
 	for rows.Next() {
 		err := rows.Scan(&country.Id, &country.Name)
@@ -87,7 +73,6 @@ func handleDatabase(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Fprintln(w, string(result))
 	}
-
 }
 
 var db *sql.DB
@@ -114,7 +99,6 @@ func runEndpoints() {
 	http.HandleFunc("GET /api/v1/country", getCountry)
 	http.HandleFunc("GET /api/v1/countries", getCountries)
 	http.HandleFunc("POST /api/v1/country", createCountry)
-	http.HandleFunc("GET /api/v1/db", handleDatabase)
 
 	http.ListenAndServe(":8080", nil)
 }
