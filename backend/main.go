@@ -21,16 +21,16 @@ type Country struct {
 	Name string
 }
 
-type city struct {
-	id         int
-	country_id int
-	name       string
+type City struct {
+	Id         int
+	Country_id int
+	Name       string
 }
 
-type citizen struct {
-	id      int
-	city_id int
-	name    string
+type Citizen struct {
+	Id      int
+	City_id int
+	Name    string
 }
 
 func getCountry(w http.ResponseWriter, r *http.Request) {
