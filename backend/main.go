@@ -30,13 +30,29 @@ type Citizen struct {
 }
 
 func getCountry(w http.ResponseWriter, r *http.Request) {
-	c := Country{1, "Russia"}
-	resp, err := json.Marshal(c)
+	var country Country
+	countryId := 1
+	query := fmt.Sprintf("SELECT * FROM countries WHERE id = %d", countryId)
+	rows, err := db.Query(query)
 	if err != nil {
-		fmt.Fprintln(w, "get error")
+		w.WriteHeader(404)
+		fmt.Fprintln(w, err)
 		return
 	}
-	fmt.Fprintln(w, string(resp))
+	rows.Next()
+	err = rows.Scan(&country.Id, &country.Name)
+	if err != nil {
+		w.WriteHeader(404)
+		fmt.Fprintln(w, err)
+		return
+	}
+	json, err := json.Marshal(country)
+	if err != nil {
+		w.WriteHeader(404)
+		fmt.Fprintln(w, "Country stringify error")
+		return
+	}
+	fmt.Fprintln(w, string(json))
 }
 
 func createCountry(w http.ResponseWriter, r *http.Request) {
