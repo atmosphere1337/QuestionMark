@@ -31,8 +31,8 @@ type Citizen struct {
 
 func getCountry(w http.ResponseWriter, r *http.Request) {
 	var country Country
-	countryId := 1
-	query := fmt.Sprintf("SELECT * FROM countries WHERE id = %d", countryId)
+	countryId := r.PathValue("country")
+	query := fmt.Sprintf("SELECT * FROM countries WHERE id = %s", countryId)
 	rows, err := db.Query(query)
 	if err != nil {
 		w.WriteHeader(404)
@@ -112,7 +112,7 @@ func initializeDatabaseFromEnv() {
 }
 
 func runEndpoints() {
-	http.HandleFunc("GET /api/v1/country", getCountry)
+	http.HandleFunc("GET /api/v1/country/{country}", getCountry)
 	http.HandleFunc("GET /api/v1/countries", getCountries)
 	http.HandleFunc("POST /api/v1/country", createCountry)
 
